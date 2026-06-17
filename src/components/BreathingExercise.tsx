@@ -1,0 +1,165 @@
+"use client";
+
+import { useState, useEffect, useCallback, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Play, Pause, RotateCcw, Volume2, VolumeX } from "lucide-react";
+import { BREATHING_PHASES } from "@/lib/constants";
+import { SectionHeading } from "@/components/ui/SectionHeading";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
+
+type Phase = (typeof BREATHING_PHASES)[number];
+
+export function BreathingExercise() {
+  const reducedMotion = useReducedMotion();
+  const [isActive, setIsActive] = useState(false);
+  const [phaseIndex, setPhaseIndex] = useState(0);
+  const [countdown, setCountdown] = useState<number>(BREATHING_PHASES[0].duration);
+  const [audioEnabled, setAudioEnabled] = useState(false);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const currentPhase: Phase = BREATHING_PHASES[phaseIndex];
+
+  const getScale = useCallback(() => {
+    if (!isActive) return 1;
+    switch (currentPhase.name) {
+      case "Амьсгалах":
+        return 1.4;
+      case "Барих":
+        return 1.4;
+      case "Гаргах":
+        return 0.8;
+      case "Зогсох":
+        return 0.8;
+      default:
+        return 1;
+    }
+  }, [isActive, currentPhase.name]);
+
+  const reset = useCallback(() => {
+    setIsActive(false);
+    setPhaseIndex(0);
+    setCountdown(BREATHING_PHASES[0].duration);
+    if (intervalRef.current) clearInterval(intervalRef.current);
+  }, []);
+
+  useEffect(() => {
+    if (!isActive) return;
+
+    intervalRef.current = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          setPhaseIndex((pi) => {
+            const next = (pi + 1) % BREATHING_PHASES.length;
+            return next;
+          });
+          return BREATHING_PHASES[(phaseIndex + 1) % BREATHING_PHASES.length].duration;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [isActive, phaseIndex]);
+
+  useEffect(() => {
+    if (isActive) {
+      setCountdown(currentPhase.duration);
+    }
+  }, [phaseIndex, isActive, currentPhase.duration]);
+
+  return (
+    <section
+      id="breathing"
+      className="bg-gradient-to-b from-warm-100 to-warm-50 py-24 sm:py-32"
+      aria-labelledby="breathing-heading"
+    >
+      <div className="mx-auto max-w-3xl px-4 text-center sm:px-6">
+        <SectionHeading
+          eyebrow="Ухаалаг мөч"
+          title="Удирдлагат амьсгалын дасгал"
+          description="Амьсгалын хэмнэлийг дагана уу. Сэтгэлийг төвлөрүүлж, биеийг тайвшруулах энгийн дасгал."
+        />
+
+        <div className="mt-12 flex flex-col items-center">
+          <div className="relative flex h-64 w-64 items-center justify-center sm:h-72 sm:w-72">
+            <motion.div
+              className="absolute inset-0 rounded-full border border-warm-300/50"
+              animate={reducedMotion ? {} : { scale: isActive ? getScale() * 1.15 : 1.15, opacity: 0.3 }}
+              transition={{ duration: currentPhase.duration, ease: "easeInOut" }}
+              aria-hidden="true"
+            />
+            <motion.div
+              className="absolute inset-4 rounded-full bg-gradient-to-br from-cream-100/60 to-warm-200/40 backdrop-blur-sm"
+              animate={reducedMotion ? {} : { scale: isActive ? getScale() : 1 }}
+              transition={{ duration: currentPhase.duration, ease: "easeInOut" }}
+              aria-hidden="true"
+            />
+            <motion.div
+              className="relative z-10 flex h-32 w-32 items-center justify-center rounded-full bg-white/85 shadow-lg backdrop-blur-md sm:h-36 sm:w-36"
+              animate={reducedMotion ? {} : { scale: isActive ? getScale() * 0.85 : 0.85 }}
+              transition={{ duration: currentPhase.duration, ease: "easeInOut" }}
+            >
+              <div>
+                <AnimatePresence mode="wait">
+                  <motion.p
+                    key={currentPhase.name}
+                    className="font-serif text-xl text-warm-800 sm:text-2xl"
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {currentPhase.name}
+                  </motion.p>
+                </AnimatePresence>
+                {isActive && (
+                  <p className="mt-1 text-3xl font-light text-warm-500" aria-live="polite">
+                    {countdown}
+                  </p>
+                )}
+              </div>
+            </motion.div>
+          </div>
+
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+            <button
+              type="button"
+              onClick={() => setIsActive(!isActive)}
+              className="flex items-center gap-2 rounded-full bg-warm-600 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-warm-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cream-200"
+              aria-label={isActive ? "Амьсгалын дасгалыг түр зогсоох" : "Амьсгалын дасгалыг эхлүүлэх"}
+            >
+              {isActive ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+              {isActive ? "Зогсоох" : "Эхлэх"}
+            </button>
+
+            <button
+              type="button"
+              onClick={reset}
+              className="flex items-center gap-2 rounded-full border border-warm-300 px-5 py-3 text-sm font-medium text-warm-700 transition-colors hover:bg-warm-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cream-200"
+              aria-label="Амьсгалын дасгалыг дахин эхлүүлэх"
+            >
+              <RotateCcw className="h-4 w-4" />
+              Дахин эхлэх
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setAudioEnabled(!audioEnabled)}
+              className="rounded-full border border-warm-300 p-3 text-warm-600 transition-colors hover:bg-warm-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cream-200"
+              aria-label={audioEnabled ? "Дууг хаах" : "Дуу асаах (анхдагчаар унтраалттай)"}
+              aria-pressed={audioEnabled}
+            >
+              {audioEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
+            </button>
+          </div>
+
+          <p className="mt-6 text-sm text-warm-600">
+            Амьсгалах 4 сек · Барих 4 сек · Гаргах 6 сек · Зогсох 2 сек
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
