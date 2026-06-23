@@ -362,45 +362,36 @@ export default function MeditationHero() {
           duration: 0.9,
           ease: [0.22, 1, 0.36, 1],
         }}
-        className="relative mx-auto h-full w-full max-w-[520px] sm:max-w-[680px] lg:max-w-[920px]"
+        className="absolute inset-0 h-full w-full"
       >
-        {/* image background holder */}
-        <div
-          className="
-      absolute inset-x-0 top-0 bottom-0
-      flex items-center justify-center
-      px-3 py-4 
-      sm:px-5 sm:py-5
-    "
-        >
-          <div
-            className="
-        relative h-full w-full
-        rounded-[28px] bg-transparent
-      "
-          >
-            <Image
-              src="/meditation.png"
-              alt="Бясалгал хийж буй хүн"
-              fill
-              priority
-              sizes="100vw"
-              className="select-none object-contain object-center"
-            />
-          </div>
+        <div className="absolute inset-0">
+          <Image
+            src="/main-bg.png"
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            className="select-none object-cover object-center"
+          />
+          <Image
+            src="/meditation.png"
+            alt="Бясалгал хийж буй хүн"
+            fill
+            priority
+            sizes="100vw"
+            className="relative z-10 select-none object-contain object-center"
+          />
         </div>
 
-        <div className='mt-10'>
-          <CompanyLogoOrbit reducedMotion={Boolean(shouldReduceMotion)} />
-        </div>
+        <CompanyLogoOrbit reducedMotion={Boolean(shouldReduceMotion)} />
 
         <div
           aria-hidden="true"
           className="
-      pointer-events-none absolute inset-x-0 bottom-0 z-30
-      h-[14svh]
-      bg-gradient-to-t from-[#b96e48] via-[#b96e48]/55 to-transparent
-    "
+            pointer-events-none absolute inset-x-0 bottom-0 z-30
+            h-[14svh]
+            bg-gradient-to-t from-[#b96e48] via-[#b96e48]/55 to-transparent
+          "
         />
       </motion.div>
     </section>

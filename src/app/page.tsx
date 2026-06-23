@@ -1,19 +1,17 @@
 import { ScrollProvider } from "@/context/ScrollContext";
-import { DailyBalance } from "@/components/DailyBalance";
 import { BreathingExercise } from "@/components/BreathingExercise";
-import { ProgressSection } from "@/components/ProgressSection";
-import { SummitSection } from "@/components/SummitSection";
 import MeditationHero from "@/components/Hero";
+import Books from "@/components/Books";
+import WorkExersice from "@/components/WorkExersice";
 
 export default function Home() {
   return (
     <ScrollProvider>
       <main>
         <MeditationHero />
-        <DailyBalance />
         <BreathingExercise />
-        <ProgressSection />
-        <SummitSection />
+        <Books />
+        <WorkExersice />
       </main>
     </ScrollProvider>
   );
