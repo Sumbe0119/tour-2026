@@ -5,6 +5,7 @@ import Books from "@/components/Books";
 import WorkExersice from "@/components/WorkExersice";
 import Greetings from "@/components/Greetings";
 import Managemant from "@/components/Managemant";
+import Conclusion from "@/components/Conclusion";
 
 export default function Home() {
   return (
@@ -16,6 +17,7 @@ export default function Home() {
         <BreathingExercise />
         <Books />
         <WorkExersice />
+        <Conclusion />
       </main>
     </ScrollProvider>
   );

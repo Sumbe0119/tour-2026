@@ -1,418 +1,275 @@
 'use client';
-import { motion, useReducedMotion, type TargetAndTransition } from 'framer-motion';
 
-type StretchVariant =
-  | 'overhead'
-  | 'backLean'
-  | 'forwardFold'
-  | 'legRaise'
-  | 'kneeHug'
-  | 'seatedHug'
-  | 'chairBack'
-  | 'calfRaise'
-  | 'legSwing';
+import React from 'react';
+import Image from 'next/image';
+import { motion } from 'framer-motion';
 
-type StretchItem = {
-  title: string;
-  subtitle: string;
-  desc: string;
-  duration: string;
-  variant: StretchVariant;
-};
-
-const stretches: StretchItem[] = [
+const people = [
   {
-    title: 'Дээш суниах',
-    subtitle: 'Мөр, гар, цээж',
-    desc: 'Нуруугаа цэх байлгаж, хоёр гараа дээш сунгана.',
-    duration: '30 сек',
-    variant: 'overhead',
+    title: 'Идэвхтэй хүн',
+    image: '/energy/active.png',
+    tone: 'active',
+    badge: 'Эрч хүчтэй',
+    points: ['Сэргэлэн', 'Төвлөрөл сайн', 'Бүтээмж өндөр'],
   },
   {
-    title: 'Арагш гэдийх',
-    subtitle: 'Нуруу, цээж',
-    desc: 'Сандлын түшлэгийг ашиглан цээжээ зөөлөн нээнэ.',
-    duration: '30 сек',
-    variant: 'backLean',
+    title: 'Эрч хүчгүй хүн',
+    image: '/energy/tired.png',
+    tone: 'tired',
+    badge: 'Ядрамтгай',
+    points: ['Ядралт их', 'Сул төвлөрөл', 'Идэвх багатай'],
   },
-  {
-    title: 'Урагш бөхийх',
-    subtitle: 'Нуруу, хүзүү',
-    desc: 'Биеэ аажмаар урагш суллаж, мөрөө амраана.',
-    duration: '30 сек',
-    variant: 'forwardFold',
-  },
-  {
-    title: 'Хөл өргөх',
-    subtitle: 'Гуя, өвдөг',
-    desc: 'Нэг хөлөө шулуун өргөж, байрлалаа тогтвортой барина.',
-    duration: '30 сек',
-    variant: 'legRaise',
-  },
-  {
-    title: 'Өвдөг тэврэх',
-    subtitle: 'Нуруу, өгзөг',
-    desc: 'Нэг өвдгөө цээж рүүгээ ойртуулж зөөлөн татна.',
-    duration: '30 сек',
-    variant: 'kneeHug',
-  },
-  {
-    title: 'Сууж тэврэх',
-    subtitle: 'Бие суллах',
-    desc: 'Биеэ эвтэйхэн эвхэж, амьсгалаа тайван болгоно.',
-    duration: '30 сек',
-    variant: 'seatedHug',
-  },
-  {
-    title: 'Сандлын түшлэг сунгалт',
-    subtitle: 'Мөр, цээж',
-    desc: 'Гараа түшлэг дээр тавьж, мөрөө зөөлөн сунгана.',
-    duration: '30 сек',
-    variant: 'chairBack',
-  },
-  {
-    title: 'Өсгий өргөх',
-    subtitle: 'Шилбэ, шагай',
-    desc: 'Сандлаас барьж, өсгийгөө аажмаар өргөнө.',
-    duration: '30 сек',
-    variant: 'calfRaise',
-  },
-  {
-    title: 'Хөл савлах',
-    subtitle: 'Ташаа, гуя',
-    desc: 'Сандлаас барьж, хөлөө бага далайцтай хөдөлгөнө.',
-    duration: '30 сек',
-    variant: 'legSwing',
-  },
-];
+] as const;
 
-const getFigureMotion = (
-  variant: StretchVariant,
-  reduced: boolean,
-): TargetAndTransition | undefined => {
-  if (reduced) return undefined;
+const metrics = [
+  { label: 'Эрч хүч', active: 92, tired: 38 },
+  { label: 'Төвлөрөл', active: 86, tired: 42 },
+  { label: 'Бүтээмж', active: 90, tired: 40 },
+] as const;
 
-  const motions: Record<StretchVariant, TargetAndTransition> = {
-    overhead: { y: [0, -8, 0], rotate: [0, -1, 0] },
-    backLean: { rotate: [0, -4, 0], y: [0, -3, 0] },
-    forwardFold: { rotate: [0, 3, 0], y: [0, 5, 0] },
-    legRaise: { x: [0, 5, 0], y: [0, -2, 0] },
-    kneeHug: { scale: [1, 1.035, 1] },
-    seatedHug: { scale: [1, 1.04, 1], rotate: [0, -1, 0] },
-    chairBack: { x: [0, -5, 0], y: [0, 3, 0] },
-    calfRaise: { y: [0, -10, 0] },
-    legSwing: { rotate: [0, -2.5, 0], x: [0, 5, 0] },
-  };
-
-  return motions[variant];
-};
-
-function Chair() {
-  return (
-    <g>
-      <path
-        d="M158 96 H210 Q220 96 220 106 V138 H158 Z"
-        className="fill-cyan-100 stroke-cyan-700/60"
-        strokeWidth="5"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M212 92 V52 Q212 42 202 42 H182 Q172 42 172 52 V92"
-        className="fill-cyan-50 stroke-cyan-700/60"
-        strokeWidth="5"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M188 138 V174"
-        className="stroke-cyan-800/70"
-        strokeWidth="6"
-        strokeLinecap="round"
-      />
-      <path
-        d="M162 178 H214"
-        className="stroke-cyan-800/70"
-        strokeWidth="6"
-        strokeLinecap="round"
-      />
-      <path
-        d="M170 178 L156 190 M206 178 L220 190"
-        className="stroke-cyan-800/60"
-        strokeWidth="5"
-        strokeLinecap="round"
-      />
-    </g>
-  );
-}
-
-function StandingChair() {
-  return (
-    <g>
-      <path
-        d="M150 104 H214 Q224 104 224 114 V140 H150 Z"
-        className="fill-cyan-100 stroke-cyan-700/60"
-        strokeWidth="5"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M214 100 V58 Q214 48 204 48 H184 Q174 48 174 58 V100"
-        className="fill-cyan-50 stroke-cyan-700/60"
-        strokeWidth="5"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M188 140 V178 M164 182 H214"
-        className="stroke-cyan-800/70"
-        strokeWidth="6"
-        strokeLinecap="round"
-      />
-    </g>
-  );
-}
-
-function Body({ variant }: { variant: StretchVariant }) {
-  const common = 'stroke-slate-900';
-  const skin = 'fill-amber-100 stroke-slate-900';
-  const shirt = 'stroke-teal-600';
-  const pants = 'stroke-slate-700';
-
-  switch (variant) {
-    case 'overhead':
-      return (
-        <g>
-          <circle cx="116" cy="58" r="14" className={skin} strokeWidth="5" />
-          <path d="M116 74 L128 108" className={shirt} strokeWidth="12" strokeLinecap="round" />
-          <path d="M120 78 L96 38 M126 78 L150 38" className={common} strokeWidth="7" strokeLinecap="round" />
-          <path d="M130 112 L108 150 L82 150" className={pants} strokeWidth="9" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M134 112 L164 148 L196 148" className={pants} strokeWidth="9" strokeLinecap="round" strokeLinejoin="round" />
-        </g>
-      );
-
-    case 'backLean':
-      return (
-        <g>
-          <circle cx="120" cy="62" r="14" className={skin} strokeWidth="5" />
-          <path d="M126 76 L152 110" className={shirt} strokeWidth="12" strokeLinecap="round" />
-          <path d="M145 108 L120 130 M151 110 L176 130" className={common} strokeWidth="7" strokeLinecap="round" />
-          <path d="M156 118 L130 152 L92 152" className={pants} strokeWidth="9" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M160 118 L188 150 L216 150" className={pants} strokeWidth="9" strokeLinecap="round" strokeLinejoin="round" />
-        </g>
-      );
-
-    case 'forwardFold':
-      return (
-        <g>
-          <circle cx="102" cy="110" r="14" className={skin} strokeWidth="5" />
-          <path d="M118 104 L150 124" className={shirt} strokeWidth="12" strokeLinecap="round" />
-          <path d="M116 118 L92 154 M126 122 L114 164" className={common} strokeWidth="7" strokeLinecap="round" />
-          <path d="M152 130 L126 156 L94 156" className={pants} strokeWidth="9" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M158 130 L188 156 L214 156" className={pants} strokeWidth="9" strokeLinecap="round" strokeLinejoin="round" />
-        </g>
-      );
-
-    case 'legRaise':
-      return (
-        <g>
-          <circle cx="122" cy="64" r="14" className={skin} strokeWidth="5" />
-          <path d="M126 80 L148 114" className={shirt} strokeWidth="12" strokeLinecap="round" />
-          <path d="M142 104 L122 130 M150 108 L174 126" className={common} strokeWidth="7" strokeLinecap="round" />
-          <path d="M152 124 L92 124 L62 124" className={pants} strokeWidth="9" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M156 126 L188 154 L214 154" className={pants} strokeWidth="9" strokeLinecap="round" strokeLinejoin="round" />
-        </g>
-      );
-
-    case 'kneeHug':
-      return (
-        <g>
-          <circle cx="124" cy="62" r="14" className={skin} strokeWidth="5" />
-          <path d="M128 78 L150 112" className={shirt} strokeWidth="12" strokeLinecap="round" />
-          <path d="M142 102 L122 122 M150 104 L134 132" className={common} strokeWidth="7" strokeLinecap="round" />
-          <path d="M152 118 L132 140 L122 112" className={pants} strokeWidth="9" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M158 122 L190 154 L214 154" className={pants} strokeWidth="9" strokeLinecap="round" strokeLinejoin="round" />
-        </g>
-      );
-
-    case 'seatedHug':
-      return (
-        <g>
-          <circle cx="124" cy="68" r="14" className={skin} strokeWidth="5" />
-          <path d="M128 84 L146 116" className={shirt} strokeWidth="12" strokeLinecap="round" />
-          <path d="M138 106 L116 130 M148 108 L128 136" className={common} strokeWidth="7" strokeLinecap="round" />
-          <path d="M150 120 L122 144 L110 116" className={pants} strokeWidth="9" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M154 122 L176 150 L198 148" className={pants} strokeWidth="9" strokeLinecap="round" strokeLinejoin="round" />
-        </g>
-      );
-
-    case 'chairBack':
-      return (
-        <g>
-          <circle cx="118" cy="58" r="14" className={skin} strokeWidth="5" />
-          <path d="M126 74 L154 110" className={shirt} strokeWidth="12" strokeLinecap="round" />
-          <path d="M148 100 L126 126 M154 104 L184 126" className={common} strokeWidth="7" strokeLinecap="round" />
-          <path d="M156 120 L126 154 L86 154" className={pants} strokeWidth="9" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M160 122 L192 154 L220 154" className={pants} strokeWidth="9" strokeLinecap="round" strokeLinejoin="round" />
-        </g>
-      );
-
-    case 'calfRaise':
-      return (
-        <g>
-          <circle cx="104" cy="54" r="14" className={skin} strokeWidth="5" />
-          <path d="M106 70 L112 116" className={shirt} strokeWidth="12" strokeLinecap="round" />
-          <path d="M112 82 L152 86 M108 84 L88 110" className={common} strokeWidth="7" strokeLinecap="round" />
-          <path d="M112 118 L100 176 L82 186" className={pants} strokeWidth="9" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M116 118 L132 176 L152 186" className={pants} strokeWidth="9" strokeLinecap="round" strokeLinejoin="round" />
-        </g>
-      );
-
-    case 'legSwing':
-      return (
-        <g>
-          <circle cx="104" cy="54" r="14" className={skin} strokeWidth="5" />
-          <path d="M106 70 L112 116" className={shirt} strokeWidth="12" strokeLinecap="round" />
-          <path d="M112 84 L154 88 M106 86 L90 112" className={common} strokeWidth="7" strokeLinecap="round" />
-          <path d="M112 118 L102 176 L84 186" className={pants} strokeWidth="9" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M116 118 L154 152 L184 150" className={pants} strokeWidth="9" strokeLinecap="round" strokeLinejoin="round" />
-        </g>
-      );
-
-    default:
-      return null;
-  }
-}
-
-function StretchFigure({
-  variant,
+function SideMetric({
+  label,
+  active,
+  tired,
+  isActive,
   index,
 }: {
-  variant: StretchVariant;
+  label: string;
+  active: number;
+  tired: number;
+  isActive: boolean;
   index: number;
 }) {
-  const reducedMotion = useReducedMotion();
-  const isStanding = variant === 'calfRaise' || variant === 'legSwing';
+  const value = isActive ? active : tired;
+  const compareValue = isActive ? tired : active;
 
   return (
-    <div className="relative flex h-56 items-center justify-center overflow-hidden rounded-[1.75rem] bg-gradient-to-br from-cyan-50 via-white to-teal-50 md:h-64">
-      <div className="absolute left-5 top-5 h-20 w-20 rounded-full bg-cyan-200/40 blur-2xl" />
-      <div className="absolute bottom-4 right-4 h-24 w-24 rounded-full bg-teal-200/40 blur-2xl" />
-
-      <svg
-        viewBox="0 0 280 220"
-        className="relative z-10 h-full w-full"
-        role="img"
-        aria-label="Сандалтай сунгалтын vector хөдөлгөөн"
-      >
-        <path
-          d="M42 190 C88 170 132 178 178 188 C214 196 238 194 258 184"
-          className="fill-none stroke-cyan-200"
-          strokeWidth="7"
-          strokeLinecap="round"
-        />
-
-        {isStanding ? <StandingChair /> : <Chair />}
-
-        <motion.g
-          animate={getFigureMotion(variant, !!reducedMotion)}
-          transition={{
-            duration: 2.8,
-            repeat: reducedMotion ? 0 : Infinity,
-            repeatType: 'mirror',
-            ease: 'easeInOut',
-            delay: index * 0.08,
-          }}
-          style={{
-            transformBox: 'fill-box',
-            transformOrigin: 'center',
-          }}
+    <div className="rounded-2xl bg-white/85 p-3 shadow-sm ring-1 ring-black/5">
+      <div className="mb-2 flex items-center justify-between">
+        <p className="text-xs font-black text-slate-800">{label}</p>
+        <span
+          className={`text-sm font-black ${
+            isActive ? 'text-emerald-600' : 'text-rose-600'
+          }`}
         >
-          <Body variant={variant} />
-        </motion.g>
-      </svg>
+          {value}%
+        </span>
+      </div>
+
+      <div
+        className={`h-3 overflow-hidden rounded-full ${
+          isActive ? 'bg-emerald-100' : 'bg-rose-100'
+        }`}
+      >
+        <motion.div
+          initial={{ width: 0 }}
+          whileInView={{ width: `${value}%` }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, delay: 0.15 + index * 0.06 }}
+          className={`h-full rounded-full ${
+            isActive
+              ? 'bg-gradient-to-r from-emerald-500 to-cyan-400'
+              : 'bg-gradient-to-r from-rose-500 to-orange-400'
+          }`}
+        />
+      </div>
+
+      <div className="mt-2 flex items-center justify-between text-[11px] font-bold text-slate-400">
+        <span>{isActive ? 'Эрч хүчгүй' : 'Идэвхтэй'}</span>
+        <span>{compareValue}%</span>
+      </div>
     </div>
   );
 }
 
-export default function ChairStretchGrid() {
+function PersonCard({
+  person,
+  index,
+}: {
+  person: (typeof people)[number];
+  index: number;
+}) {
+  const isActive = person.tone === 'active';
+
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-cyan-950 px-4 py-16 sm:px-6 lg:px-8">
-      <div className="absolute -left-40 top-10 h-96 w-96 rounded-full bg-cyan-500/20 blur-3xl" />
-      <div className="absolute -right-40 bottom-10 h-96 w-96 rounded-full bg-teal-400/20 blur-3xl" />
+    <motion.article
+      initial={{ opacity: 0, y: 28 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.25 }}
+      transition={{ duration: 0.55, delay: index * 0.08 }}
+      whileHover={{ y: -6 }}
+      className={`relative overflow-hidden rounded-[2.5rem] border p-4 shadow-2xl ${
+        isActive
+          ? 'border-emerald-200 bg-gradient-to-br from-emerald-50 via-white to-cyan-50 shadow-emerald-900/10'
+          : 'border-rose-200 bg-gradient-to-br from-rose-50 via-white to-orange-50 shadow-rose-900/10'
+      }`}
+    >
+      <div
+        className={`absolute -top-20 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full blur-3xl ${
+          isActive ? 'bg-emerald-300/35' : 'bg-rose-300/35'
+        }`}
+      />
 
-      <div className="relative mx-auto max-w-7xl">
-        <div className="mx-auto mb-10 max-w-3xl text-center">
-          <motion.p
-            initial={{ opacity: 0, y: 14 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.45 }}
-            className="text-sm font-bold uppercase tracking-[0.32em] text-cyan-300"
-          >
-            Office stretch
-          </motion.p>
+      <div className="relative">
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <div>
+            <p
+              className={`text-xs font-black uppercase tracking-[0.22em] ${
+                isActive ? 'text-emerald-600' : 'text-rose-600'
+              }`}
+            >
+              {isActive ? 'Active lifestyle' : 'Low energy'}
+            </p>
 
-          <motion.h2
-            initial={{ opacity: 0, y: 18 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.55, delay: 0.05 }}
-            className="mt-3 text-4xl font-black tracking-tight text-white md:text-5xl"
-          >
-            Сандалтай дасгалууд
-          </motion.h2>
+            <h3
+              className={`mt-1 text-2xl font-black tracking-tight ${
+                isActive ? 'text-emerald-950' : 'text-rose-950'
+              }`}
+            >
+              {person.title}
+            </h3>
+          </div>
 
-          <motion.p
-            initial={{ opacity: 0, y: 18 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.55, delay: 0.1 }}
-            className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-slate-300 md:text-base"
+          <span
+            className={`rounded-full px-4 py-2 text-xs font-black text-white ${
+              isActive ? 'bg-emerald-600' : 'bg-rose-600'
+            }`}
           >
-            Ажил дундуур 30 секундэд хийж болох энгийн сунгалтын
-            хөдөлгөөнүүд. Өвдөлт мэдрэгдвэл хөдөлгөөнөө зогсооно.
-          </motion.p>
+            {person.badge}
+          </span>
         </div>
 
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {stretches.map((item, index) => (
-            <motion.article
-              key={item.title}
-              initial={{ opacity: 0, y: 28 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.25 }}
-              transition={{ duration: 0.45, delay: index * 0.05 }}
-              whileHover={{ y: -7, scale: 1.015 }}
-              className="group relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.08] p-3 shadow-2xl shadow-cyan-950/30 backdrop-blur-xl"
+        {/* Image + side metrics */}
+        <div className="grid gap-4 lg:grid-cols-[1fr_230px]">
+          <div
+            className={`relative flex h-[420px] items-end justify-center overflow-hidden rounded-[2rem] border ${
+              isActive
+                ? 'border-emerald-100 bg-emerald-100/35'
+                : 'border-rose-100 bg-rose-100/35'
+            }`}
+          >
+            <div className="absolute inset-x-8 bottom-6 h-24 rounded-full bg-black/10 blur-2xl" />
+
+            <motion.div
+              animate={
+                isActive
+                  ? { y: [0, -10, 0], scale: [1, 1.015, 1] }
+                  : { y: [0, 6, 0], rotate: [0, -0.8, 0] }
+              }
+              transition={{
+                duration: isActive ? 3 : 4,
+                repeat: Infinity,
+                ease: 'easeInOut',
+              }}
+              className="relative h-full w-full"
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-white/12 via-transparent to-cyan-400/10 opacity-70" />
+              <Image
+                src={person.image}
+                alt={person.title}
+                fill
+                priority={index === 0}
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-contain object-bottom drop-shadow-2xl"
+              />
+            </motion.div>
+          </div>
 
-              <div className="relative rounded-[1.7rem] bg-white p-3">
-                <div className="mb-3 flex items-start justify-between gap-3 px-1">
-                  <div>
-                    <p className="text-xs font-black uppercase tracking-[0.2em] text-cyan-700">
-                      {String(index + 1).padStart(2, '0')}
-                    </p>
-                    <h3 className="mt-1 text-lg font-black tracking-tight text-slate-950">
-                      {item.title}
-                    </h3>
-                    <p className="mt-1 text-xs font-semibold text-slate-500">
-                      {item.subtitle}
-                    </p>
-                  </div>
+          <div className="flex flex-col justify-between gap-3 rounded-[2rem] bg-white/45 p-3 ring-1 ring-black/5">
+            <div className="space-y-3">
+              {metrics.map((metric, metricIndex) => (
+                <SideMetric
+                  key={metric.label}
+                  label={metric.label}
+                  active={metric.active}
+                  tired={metric.tired}
+                  isActive={isActive}
+                  index={metricIndex}
+                />
+              ))}
+            </div>
 
-                  <span className="shrink-0 rounded-full bg-slate-950 px-3 py-1.5 text-xs font-bold text-white">
-                    {item.duration}
-                  </span>
-                </div>
+            <div
+              className={`rounded-2xl px-4 py-4 text-center ${
+                isActive ? 'bg-emerald-600' : 'bg-rose-600'
+              }`}
+            >
+              <p className="text-xs font-black uppercase tracking-[0.2em] text-white/70">
+                Үр дүн
+              </p>
+              <p className="mt-1 text-lg font-black text-white">
+                {isActive ? 'Илүү бүтээмжтэй' : 'Илүү амархан ядарна'}
+              </p>
+            </div>
+          </div>
+        </div>
 
-                <StretchFigure variant={item.variant} index={index} />
-
-                <p className="px-1 pt-4 text-sm leading-6 text-slate-600">
-                  {item.desc}
-                </p>
-              </div>
-            </motion.article>
+        <div className="mt-4 grid grid-cols-3 gap-2">
+          {person.points.map((point) => (
+            <div
+              key={point}
+              className="rounded-2xl bg-white/85 px-3 py-3 text-center text-xs font-black text-slate-700 shadow-sm ring-1 ring-black/5"
+            >
+              {point}
+            </div>
           ))}
         </div>
       </div>
-    </section>
+    </motion.article>
   );
 }
+
+const Conclusion = () => {
+  return (
+    <section className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-white to-cyan-50 px-4 py-16 sm:px-6 lg:px-8">
+      <div className="absolute -left-32 top-0 h-96 w-96 rounded-full bg-emerald-300/25 blur-3xl" />
+      <div className="absolute -right-32 bottom-0 h-96 w-96 rounded-full bg-rose-300/25 blur-3xl" />
+      <div className="absolute left-1/2 top-20 h-72 w-72 -translate-x-1/2 rounded-full bg-cyan-200/30 blur-3xl" />
+
+      <div className="relative mx-auto max-w-7xl">
+        <motion.div
+          initial={{ opacity: 0, y: 18 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="mx-auto max-w-3xl text-center"
+        >
+          <p className="text-sm font-black uppercase tracking-[0.32em] text-cyan-700">
+            Conclusion
+          </p>
+
+          <h2 className="mt-3 text-3xl font-black tracking-tight text-slate-950 sm:text-5xl">
+            Идэвхтэй ба эрч хүчгүй хүний ялгаа
+          </h2>
+
+          <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-slate-600 sm:text-base">
+            Хөдөлгөөнтэй өдөр илүү сэргэлэн, төвлөрсөн, бүтээмжтэй өнгөрдөг.
+          </p>
+        </motion.div>
+
+        <div className="relative mt-10 grid gap-6 xl:grid-cols-2">
+          <div className="pointer-events-none absolute left-1/2 top-1/2 z-20 hidden h-20 w-20 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200 bg-white text-xl font-black text-slate-950 shadow-2xl xl:flex">
+            VS
+          </div>
+
+          {people.map((person, index) => (
+            <PersonCard key={person.title} person={person} index={index} />
+          ))}
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 18 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.55, delay: 0.1 }}
+          className="mx-auto mt-8 max-w-4xl rounded-[2rem] border border-cyan-200 bg-white/80 px-6 py-6 text-center shadow-xl shadow-cyan-900/5 backdrop-blur"
+        >
+          <p className="text-lg font-black leading-8 text-slate-900 sm:text-xl">
+            Багахан хөдөлгөөн ч өдөр тутмын эрч хүчийг нэмэгдүүлдэг.
+          </p>
+        </motion.div>
+      </div>
+    </section>
+  );
+};
+
+export default Conclusion;
