@@ -1,220 +1,117 @@
-'use client';
+"use client";
 
-import React from 'react';
-import Image from 'next/image';
-import { motion } from 'framer-motion';
+import React from "react";
+import { motion } from "framer-motion";
 
-const people = [
+const practices = [
   {
-    title: 'Идэвхтэй хүн',
-    image: '/energy/active.png',
-    tone: 'active',
-    badge: 'Эрч хүчтэй',
-    points: ['Сэргэлэн', 'Төвлөрөл сайн', 'Бүтээмж өндөр'],
+    title: "Дасгал хөдөлгөөн",
+    desc: "Өдөр бүр богино хугацаанд биеэ хөдөлгөж, эрч хүчээ нэмэгдүүлэх.",
   },
   {
-    title: 'Эрч хүчгүй хүн',
-    image: '/energy/tired.png',
-    tone: 'tired',
-    badge: 'Ядрамтгай',
-    points: ['Ядралт их', 'Сул төвлөрөл', 'Идэвх багатай'],
+    title: "Сунгалт",
+    desc: "Булчин чангарахаас сэргийлж, ажлын дунд биеэ сэргээх.",
+  },
+  {
+    title: "Амьсгалын дасгал",
+    desc: "Тайвширч, төвлөрөл нэмэгдүүлэх энгийн дадал.",
+  },
+  {
+    title: "Иогийн энгийн хөдөлгөөн",
+    desc: "Бие, сэтгэлийн тэнцвэрийг дэмжих хөнгөн хөдөлгөөн.",
   },
 ] as const;
 
-const metrics = [
-  { label: 'Эрч хүч', active: 92, tired: 38 },
-  { label: 'Төвлөрөл', active: 86, tired: 42 },
-  { label: 'Бүтээмж', active: 90, tired: 40 },
+const videos = [
+  {
+    title: "Дасгалын бичлэг 01",
+    desc: "Өдөр тутмын богино хөдөлгөөнд ашиглах боломжтой.",
+    url: "https://www.youtube.com/watch?v=u2AYiHZel_Y",
+  },
+  {
+    title: "Дасгалын бичлэг 02",
+    desc: "Багаар хамтдаа хийхэд тохиромжтой хөдөлгөөн.",
+    url: "https://www.youtube.com/watch?v=MDz3OCDBvrU",
+  },
+  {
+    title: "Дасгалын бичлэг 03",
+    desc: "Сунгалт болон энгийн хөдөлгөөний санаа авах боломжтой.",
+    url: "https://www.youtube.com/watch?v=M-8FvC3GD8c&t=32s",
+  },
 ] as const;
 
-function SideMetric({
-  label,
-  active,
-  tired,
-  isActive,
+function PracticeCard({
+  item,
   index,
 }: {
-  label: string;
-  active: number;
-  tired: number;
-  isActive: boolean;
+  item: (typeof practices)[number];
   index: number;
 }) {
-  const value = isActive ? active : tired;
-  const compareValue = isActive ? tired : active;
-
   return (
-    <div className="rounded-2xl bg-white/85 p-3 shadow-sm ring-1 ring-black/5">
-      <div className="mb-2 flex items-center justify-between">
-        <p className="text-xs font-black text-slate-800">{label}</p>
-        <span
-          className={`text-sm font-black ${
-            isActive ? 'text-emerald-600' : 'text-rose-600'
-          }`}
-        >
-          {value}%
-        </span>
-      </div>
+    <motion.div
+      initial={{ opacity: 0, y: 22 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.35 }}
+      transition={{ duration: 0.5, delay: index * 0.08 }}
+      whileHover={{ y: -6 }}
+      className="group relative overflow-hidden rounded-[2rem] border border-emerald-100 bg-white/85 p-6 shadow-xl shadow-emerald-900/5 backdrop-blur"
+    >
+      <div className="absolute -right-12 -top-12 h-32 w-32 rounded-full bg-emerald-200/45 blur-2xl transition group-hover:bg-emerald-300/60" />
 
-      <div
-        className={`h-3 overflow-hidden rounded-full ${
-          isActive ? 'bg-emerald-100' : 'bg-rose-100'
-        }`}
-      >
-        <motion.div
-          initial={{ width: 0 }}
-          whileInView={{ width: `${value}%` }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.15 + index * 0.06 }}
-          className={`h-full rounded-full ${
-            isActive
-              ? 'bg-gradient-to-r from-emerald-500 to-cyan-400'
-              : 'bg-gradient-to-r from-rose-500 to-orange-400'
-          }`}
-        />
-      </div>
+      <div className="relative z-10">
+        <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-cyan-400 text-lg font-black text-white shadow-lg shadow-emerald-900/15">
+          {index + 1}
+        </div>
 
-      <div className="mt-2 flex items-center justify-between text-[11px] font-bold text-slate-400">
-        <span>{isActive ? 'Эрч хүчгүй' : 'Идэвхтэй'}</span>
-        <span>{compareValue}%</span>
+        <h3 className="text-xl font-black text-slate-950">{item.title}</h3>
+
+        <p className="mt-3 text-sm leading-6 text-slate-600">{item.desc}</p>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
-function PersonCard({
-  person,
+function VideoCard({
+  video,
   index,
 }: {
-  person: (typeof people)[number];
+  video: (typeof videos)[number];
   index: number;
 }) {
-  const isActive = person.tone === 'active';
-
   return (
-    <motion.article
-      initial={{ opacity: 0, y: 28 }}
+    <motion.a
+      href={video.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      initial={{ opacity: 0, y: 22 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.25 }}
-      transition={{ duration: 0.55, delay: index * 0.08 }}
-      whileHover={{ y: -6 }}
-      className={`relative overflow-hidden rounded-[2.5rem] border p-4 shadow-2xl ${
-        isActive
-          ? 'border-emerald-200 bg-gradient-to-br from-emerald-50 via-white to-cyan-50 shadow-emerald-900/10'
-          : 'border-rose-200 bg-gradient-to-br from-rose-50 via-white to-orange-50 shadow-rose-900/10'
-      }`}
+      viewport={{ once: true, amount: 0.35 }}
+      transition={{ duration: 0.5, delay: index * 0.08 }}
+      whileHover={{ y: -6, scale: 1.015 }}
+      className="group relative overflow-hidden rounded-[2rem] border border-white/15 bg-slate-950 p-6 text-white shadow-2xl shadow-slate-950/20"
     >
-      <div
-        className={`absolute -top-20 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full blur-3xl ${
-          isActive ? 'bg-emerald-300/35' : 'bg-rose-300/35'
-        }`}
-      />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(16,185,129,0.35),transparent_35%),radial-gradient(circle_at_90%_90%,rgba(34,211,238,0.22),transparent_35%)]" />
 
-      <div className="relative">
-        <div className="mb-4 flex items-center justify-between gap-3">
-          <div>
-            <p
-              className={`text-xs font-black uppercase tracking-[0.22em] ${
-                isActive ? 'text-emerald-600' : 'text-rose-600'
-              }`}
-            >
-              {isActive ? 'Active lifestyle' : 'Low energy'}
-            </p>
-
-            <h3
-              className={`mt-1 text-2xl font-black tracking-tight ${
-                isActive ? 'text-emerald-950' : 'text-rose-950'
-              }`}
-            >
-              {person.title}
-            </h3>
+      <div className="relative z-10">
+        <div className="mb-6 flex items-center justify-between gap-4">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white text-lg font-black text-slate-950 transition group-hover:scale-110">
+            ▶
           </div>
 
-          <span
-            className={`rounded-full px-4 py-2 text-xs font-black text-white ${
-              isActive ? 'bg-emerald-600' : 'bg-rose-600'
-            }`}
-          >
-            {person.badge}
+          <span className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-white/70">
+            YouTube
           </span>
         </div>
 
-        {/* Image + side metrics */}
-        <div className="grid gap-4 lg:grid-cols-[1fr_230px]">
-          <div
-            className={`relative flex h-[420px] items-end justify-center overflow-hidden rounded-[2rem] border ${
-              isActive
-                ? 'border-emerald-100 bg-emerald-100/35'
-                : 'border-rose-100 bg-rose-100/35'
-            }`}
-          >
-            <div className="absolute inset-x-8 bottom-6 h-24 rounded-full bg-black/10 blur-2xl" />
+        <h3 className="text-xl font-black">{video.title}</h3>
 
-            <motion.div
-              animate={
-                isActive
-                  ? { y: [0, -10, 0], scale: [1, 1.015, 1] }
-                  : { y: [0, 6, 0], rotate: [0, -0.8, 0] }
-              }
-              transition={{
-                duration: isActive ? 3 : 4,
-                repeat: Infinity,
-                ease: 'easeInOut',
-              }}
-              className="relative h-full w-full"
-            >
-              <Image
-                src={person.image}
-                alt={person.title}
-                fill
-                priority={index === 0}
-                sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-contain object-bottom drop-shadow-2xl"
-              />
-            </motion.div>
-          </div>
+        <p className="mt-3 text-sm leading-6 text-white/65">{video.desc}</p>
 
-          <div className="flex flex-col justify-between gap-3 rounded-[2rem] bg-white/45 p-3 ring-1 ring-black/5">
-            <div className="space-y-3">
-              {metrics.map((metric, metricIndex) => (
-                <SideMetric
-                  key={metric.label}
-                  label={metric.label}
-                  active={metric.active}
-                  tired={metric.tired}
-                  isActive={isActive}
-                  index={metricIndex}
-                />
-              ))}
-            </div>
-
-            <div
-              className={`rounded-2xl px-4 py-4 text-center ${
-                isActive ? 'bg-emerald-600' : 'bg-rose-600'
-              }`}
-            >
-              <p className="text-xs font-black uppercase tracking-[0.2em] text-white/70">
-                Үр дүн
-              </p>
-              <p className="mt-1 text-lg font-black text-white">
-                {isActive ? 'Илүү бүтээмжтэй' : 'Илүү амархан ядарна'}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-4 grid grid-cols-3 gap-2">
-          {person.points.map((point) => (
-            <div
-              key={point}
-              className="rounded-2xl bg-white/85 px-3 py-3 text-center text-xs font-black text-slate-700 shadow-sm ring-1 ring-black/5"
-            >
-              {point}
-            </div>
-          ))}
-        </div>
+        <p className="mt-6 text-sm font-black text-emerald-300">
+          Бичлэг үзэх →
+        </p>
       </div>
-    </motion.article>
+    </motion.a>
   );
 }
 
@@ -222,46 +119,131 @@ const Conclusion = () => {
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-white to-cyan-50 px-4 py-16 sm:px-6 lg:px-8">
       <div className="absolute -left-32 top-0 h-96 w-96 rounded-full bg-emerald-300/25 blur-3xl" />
-      <div className="absolute -right-32 bottom-0 h-96 w-96 rounded-full bg-rose-300/25 blur-3xl" />
-      <div className="absolute left-1/2 top-20 h-72 w-72 -translate-x-1/2 rounded-full bg-cyan-200/30 blur-3xl" />
+      <div className="absolute -right-32 bottom-0 h-96 w-96 rounded-full bg-cyan-300/25 blur-3xl" />
+      <div className="absolute left-1/2 top-20 h-72 w-72 -translate-x-1/2 rounded-full bg-lime-200/30 blur-3xl" />
 
       <div className="relative mx-auto max-w-7xl">
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="mx-auto max-w-3xl text-center"
+          className="mx-auto max-w-4xl text-center"
         >
-          <p className="text-sm font-black uppercase tracking-[0.32em] text-cyan-700">
-            Conclusion
+          <p className="text-sm font-black uppercase tracking-[0.32em] text-emerald-700">
+            Healthy lifestyle
           </p>
 
-          <h2 className="mt-3 text-3xl font-black tracking-tight text-slate-950 sm:text-5xl">
-            Идэвхтэй ба эрч хүчгүй хүний ялгаа
+          <h2 className="mt-4 text-4xl font-black tracking-tight text-slate-950 sm:text-5xl lg:text-6xl">
+            Бие эрүүл,{" "}
+            <span className="bg-gradient-to-r from-emerald-600 via-cyan-500 to-lime-500 bg-clip-text text-transparent">
+              эрч хүч болгоё
+            </span>
           </h2>
 
-          <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-slate-600 sm:text-base">
-            Хөдөлгөөнтэй өдөр илүү сэргэлэн, төвлөрсөн, бүтээмжтэй өнгөрдөг.
+          <p className="mx-auto mt-6 max-w-2xl text-lg font-semibold leading-8 text-slate-700">
+            Эрүүл байгууллага эрүүл ажилтнаас эхэлдэг.
           </p>
         </motion.div>
 
-        <div className="relative mt-10 grid gap-6 xl:grid-cols-2">
-          <div className="pointer-events-none absolute left-1/2 top-1/2 z-20 hidden h-20 w-20 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200 bg-white text-xl font-black text-slate-950 shadow-2xl xl:flex">
-            VS
-          </div>
+        {/* Main content */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.25 }}
+          transition={{ duration: 0.55 }}
+          className="mx-auto mt-10 max-w-5xl overflow-hidden rounded-[2.5rem] border border-emerald-100 bg-white/85 shadow-2xl shadow-emerald-900/10 backdrop-blur"
+        >
+          <div className="grid gap-0 lg:grid-cols-[0.9fr_1.1fr]">
+            <div className="relative overflow-hidden bg-gradient-to-br from-emerald-600 via-cyan-600 to-slate-950 p-8 text-white sm:p-10">
+              <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-white/15 blur-3xl" />
+              <div className="absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-lime-300/20 blur-3xl" />
 
-          {people.map((person, index) => (
-            <PersonCard key={person.title} person={person} index={index} />
+              <div className="relative z-10">
+                <p className="text-xs font-black uppercase tracking-[0.32em] text-white/55">
+                  Гол санаа
+                </p>
+
+                <h3 className="mt-4 text-3xl font-black leading-tight sm:text-4xl">
+                  Өдөр бүрийн зөв дадал эрүүл соёлыг бий болгоно
+                </h3>
+
+                <p className="mt-6 text-base font-medium leading-8 text-white/80">
+                  Эрүүл мэнд бол нэг өдрийн сонголт биш, харин өдөр бүрийн зөв
+                  дадал юм.
+                </p>
+              </div>
+            </div>
+
+            <div className="p-8 sm:p-10">
+              <p className="text-base leading-8 text-slate-700">
+                Тиймээс бид эрүүл, эрч хүчтэй хамт олны соёлыг төлөвшүүлэх
+                зорилгоор салбар болгон өдөр бүр багийн ойлголцоон дээр{" "}
+                <span className="font-black text-emerald-700">
+                  5-10 минутыг
+                </span>{" "}
+                өөрсдөдөө зориулж хамтдаа дасгал хөдөлгөөн хийх, сунгалт хийх,
+                амьсгалын дасгал болон иогийн энгийн хөдөлгөөнүүдийг хэвшүүлэх
+                санал дэвшүүлж байна.
+              </p>
+
+              <div className="mt-6 rounded-3xl bg-emerald-50 p-5 ring-1 ring-emerald-100">
+                <p className="text-lg font-black leading-8 text-slate-950">
+                  Эрүүл биеэс эрч хүч төрж, эрч хүчээс амжилт бүтдэг.
+                </p>
+              </div>
+
+              <p className="mt-6 text-base leading-8 text-slate-700">
+                Бид өөрсдөөсөө эхэлж, хамтдаа хөдөлж, хамтдаа эрүүлжин, эрч
+                хүчтэй байгууллагыг бүтээхийг уриалж байна.
+              </p>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Practice cards */}
+        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {practices.map((item, index) => (
+            <PracticeCard key={item.title} item={item} index={index} />
           ))}
         </div>
 
+        {/* Video links */}
+        <motion.div
+          initial={{ opacity: 0, y: 18 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="mx-auto mt-14 max-w-3xl text-center"
+        >
+          <p className="text-sm font-black uppercase tracking-[0.32em] text-cyan-700">
+            Exercise videos
+          </p>
+
+          <h3 className="mt-3 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">
+            Дасгалын санал болгох 3 бичлэг
+          </h3>
+
+          <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-slate-600 sm:text-base">
+            Эдгээр бичлэгээс санаа авч, салбар бүр өдөр тутмын 5-10 минутын
+            хөдөлгөөнөө эхлүүлэх боломжтой.
+          </p>
+        </motion.div>
+
+        <div className="mt-8 grid gap-5 md:grid-cols-3">
+          {videos.map((video, index) => (
+            <VideoCard key={video.url} video={video} index={index} />
+          ))}
+        </div>
+
+        {/* Bottom quote */}
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.55, delay: 0.1 }}
-          className="mx-auto mt-8 max-w-4xl rounded-[2rem] border border-cyan-200 bg-white/80 px-6 py-6 text-center shadow-xl shadow-cyan-900/5 backdrop-blur"
+          className="mx-auto mt-10 max-w-4xl rounded-[2rem] border border-cyan-200 bg-white/80 px-6 py-6 text-center shadow-xl shadow-cyan-900/5 backdrop-blur"
         >
           <p className="text-lg font-black leading-8 text-slate-900 sm:text-xl">
             Багахан хөдөлгөөн ч өдөр тутмын эрч хүчийг нэмэгдүүлдэг.
