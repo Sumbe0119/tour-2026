@@ -6,6 +6,7 @@ import WorkExersice from "@/components/WorkExersice";
 import Greetings from "@/components/Greetings";
 import Managemant from "@/components/Managemant";
 import Conclusion from "@/components/Conclusion";
+import Impact from "@/components/Impact";
 
 export default function Home() {
   return (
@@ -14,6 +15,7 @@ export default function Home() {
         <Greetings />
         <Managemant />
         <MeditationHero />
+        <Impact />
         <BreathingExercise />
         <Books />
         <WorkExersice />

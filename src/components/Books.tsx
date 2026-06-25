@@ -358,15 +358,13 @@ export default function BookShowcase() {
             <p className="mb-4 text-sm font-semibold uppercase tracking-[0.38em] text-white/45">
               Recommended books
             </p>
-
             <h2 className="text-4xl font-black tracking-tight sm:text-5xl lg:text-6xl">
-              Сэтгэлгээ өөрчилдөг{" "}
+              Сэтгэлгээ өөрчилдөг
               <span className="bg-gradient-to-r from-red-400 via-orange-300 to-yellow-200 bg-clip-text text-transparent">
                 3 ном
               </span>
             </h2>
           </div>
-
           <div className="grid gap-14 md:grid-cols-3">
             {books.map((book, index) => (
               <Book3D

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useReducer, useEffect, useCallback, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Play, Pause, RotateCcw, Volume2, VolumeX } from "lucide-react";
 import { BREATHING_PHASES } from "@/lib/constants";
@@ -9,13 +9,50 @@ import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 type Phase = (typeof BREATHING_PHASES)[number];
 
+type BreathingState = {
+  isActive: boolean;
+  phaseIndex: number;
+  countdown: number;
+};
+
+type BreathingAction = { type: "toggle" } | { type: "reset" } | { type: "tick" };
+
+const initialState: BreathingState = {
+  isActive: false,
+  phaseIndex: 0,
+  countdown: BREATHING_PHASES[0].duration,
+};
+
+function breathingReducer(state: BreathingState, action: BreathingAction): BreathingState {
+  switch (action.type) {
+    case "toggle":
+      return { ...state, isActive: !state.isActive };
+    case "reset":
+      return { ...initialState };
+    case "tick": {
+      if (!state.isActive) return state;
+      if (state.countdown > 1) {
+        return { ...state, countdown: state.countdown - 1 };
+      }
+      const nextIndex = (state.phaseIndex + 1) % BREATHING_PHASES.length;
+      return {
+        ...state,
+        phaseIndex: nextIndex,
+        countdown: BREATHING_PHASES[nextIndex].duration,
+      };
+    }
+    default:
+      return state;
+  }
+}
+
 export function BreathingExercise() {
   const reducedMotion = useReducedMotion();
-  const [isActive, setIsActive] = useState(false);
-  const [phaseIndex, setPhaseIndex] = useState(0);
-  const [countdown, setCountdown] = useState<number>(BREATHING_PHASES[0].duration);
+  const [{ isActive, phaseIndex, countdown }, dispatch] = useReducer(
+    breathingReducer,
+    initialState,
+  );
   const [audioEnabled, setAudioEnabled] = useState(false);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const currentPhase: Phase = BREATHING_PHASES[phaseIndex];
 
@@ -35,39 +72,15 @@ export function BreathingExercise() {
     }
   }, [isActive, currentPhase.name]);
 
-  const reset = useCallback(() => {
-    setIsActive(false);
-    setPhaseIndex(0);
-    setCountdown(BREATHING_PHASES[0].duration);
-    if (intervalRef.current) clearInterval(intervalRef.current);
-  }, []);
-
   useEffect(() => {
     if (!isActive) return;
 
-    intervalRef.current = setInterval(() => {
-      setCountdown((prev) => {
-        if (prev <= 1) {
-          setPhaseIndex((pi) => {
-            const next = (pi + 1) % BREATHING_PHASES.length;
-            return next;
-          });
-          return BREATHING_PHASES[(phaseIndex + 1) % BREATHING_PHASES.length].duration;
-        }
-        return prev - 1;
-      });
+    const id = window.setInterval(() => {
+      dispatch({ type: "tick" });
     }, 1000);
 
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
-  }, [isActive, phaseIndex]);
-
-  useEffect(() => {
-    if (isActive) {
-      setCountdown(currentPhase.duration);
-    }
-  }, [phaseIndex, isActive, currentPhase.duration]);
+    return () => window.clearInterval(id);
+  }, [isActive]);
 
   return (
     <section
@@ -126,7 +139,7 @@ export function BreathingExercise() {
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             <button
               type="button"
-              onClick={() => setIsActive(!isActive)}
+              onClick={() => dispatch({ type: "toggle" })}
               className="flex items-center gap-2 rounded-full bg-warm-600 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-warm-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cream-200"
               aria-label={isActive ? "Амьсгалын дасгалыг түр зогсоох" : "Амьсгалын дасгалыг эхлүүлэх"}
             >
@@ -136,7 +149,7 @@ export function BreathingExercise() {
 
             <button
               type="button"
-              onClick={reset}
+              onClick={() => dispatch({ type: "reset" })}
               className="flex items-center gap-2 rounded-full border border-warm-300 px-5 py-3 text-sm font-medium text-warm-700 transition-colors hover:bg-warm-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cream-200"
               aria-label="Амьсгалын дасгалыг дахин эхлүүлэх"
             >
@@ -146,7 +159,7 @@ export function BreathingExercise() {
 
             <button
               type="button"
-              onClick={() => setAudioEnabled(!audioEnabled)}
+              onClick={() => setAudioEnabled((prev) => !prev)}
               className="rounded-full border border-warm-300 p-3 text-warm-600 transition-colors hover:bg-warm-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cream-200"
               aria-label={audioEnabled ? "Дууг хаах" : "Дуу асаах (анхдагчаар унтраалттай)"}
               aria-pressed={audioEnabled}
