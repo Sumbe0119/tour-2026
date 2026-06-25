@@ -286,7 +286,7 @@ const Impact = () => {
       <div className="pointer-events-none absolute bottom-0 right-1/4 h-96 w-96 rounded-full bg-yellow-700/15 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-32 -left-20 h-80 w-80 rounded-full bg-amber-500/20 blur-3xl" />
 
-      <div className="relative mx-auto max-w-7xl">
+      <div className="relative mx-auto max-w-7xl py-12">
         {/* HERO */}
         <div className="grid items-center gap-12 lg:grid-cols-[1fr_0.9fr]">
           <motion.div
@@ -299,11 +299,10 @@ const Impact = () => {
               <span className="h-2 w-2 rounded-full bg-orange-500" />
               Випашяна бясалгал
             </div>
-
             <h1 className="mt-8 text-5xl font-black leading-[0.95] tracking-tight text-slate-950 sm:text-6xl lg:text-7xl">
-              Ажилчдын
+              Сэтгэлээ
               <span className="block text-orange-600">
-                хөгжилд нөлөө
+                ариусгая
               </span>
             </h1>
 
@@ -320,74 +319,6 @@ const Impact = () => {
           </motion.div>
 
           <HeroVisual />
-        </div>
-
-        {/* PERSONAL RESULT */}
-        <div className="mt-16">
-          <SectionHeader
-            label="Ажилчдын хувь хүн дээр гарах үр дүн"
-            title="Дотоод тайван байдал нь ажлын чанарт шууд нөлөөлнө"
-          />
-
-          <div className="grid gap-5 md:grid-cols-3">
-            {personalResults.map((item, index) => (
-              <InfoCard key={item.title} item={item} index={index} />
-            ))}
-          </div>
-        </div>
-
-        {/* RELATION + WORK */}
-
-        <div className="mt-16">
-          <SectionHeader
-            label="Зан төлөв ба харилцаа"
-            title="Илүү тайван, ойлголцолтой баг"
-          />
-
-          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-            {relationResults.map((item, index) => (
-              <InfoCard key={item.title} item={item} index={index} />
-            ))}
-          </div>
-        </div>
-
-
-        {/* COMPANY BENEFIT */}
-        <div className="mt-16 rounded-[2.5rem] border border-orange-100 bg-white/65 p-6 shadow-2xl shadow-orange-900/10 backdrop-blur sm:p-8">
-          <SectionHeader
-            label="Ажилчдыг бясалгалд уриалах — Компанийн ашиг тус"
-            title="Эрүүл сэтгэлтэй ажилтан бол тогтвортой байгууллагын суурь"
-          />
-
-          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-            {companyBenefits.map((item, index) => (
-              <InfoCard key={item.title} item={item} index={index} />
-            ))}
-          </div>
-        </div>
-
-        {/* INVITE METHOD */}
-        <div className="mt-16">
-          <SectionHeader
-            label="Зөв уриалах арга — Tone & Message"
-            title="Албадах биш, ойлгуулах замаар оролцоог нэмэгдүүлнэ"
-          />
-
-          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-            {inviteSteps.map((step, index) => (
-              <StepCard key={step.number} step={step} index={index} />
-            ))}
-          </div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 18 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.55, delay: 0.1 }}
-            className="mx-auto mt-8 max-w-4xl rounded-full border border-orange-200 bg-white/80 px-6 py-4 text-center text-sm font-black italic text-orange-900 shadow-xl shadow-orange-900/10"
-          >
-            Хүмүүс өөрсдөө мэдэрч байж илүү идэвхтэй оролцдог.
-          </motion.div>
         </div>
       </div>
     </section>

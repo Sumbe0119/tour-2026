@@ -27,7 +27,7 @@ const ThoughtClarity = () => {
       <div className="pointer-events-none absolute -left-32 top-10 h-96 w-96 rounded-full bg-orange-300/25 blur-3xl" />
       <div className="pointer-events-none absolute -right-32 bottom-0 h-96 w-96 rounded-full bg-yellow-700/15 blur-3xl" />
 
-      <div className="relative mx-auto max-w-7xl">
+      <div className="relative mx-auto max-w-7xl py-12">
         <div className="grid items-center gap-10 lg:grid-cols-[0.9fr_1.1fr]">
           {/* Left title */}
           <motion.div
@@ -42,8 +42,8 @@ const ThoughtClarity = () => {
             </div>
 
             <h2 className="mt-7 text-4xl font-black leading-tight tracking-tight text-slate-950 sm:text-5xl lg:text-6xl">
-              Бодлыг
-              <span className="block text-orange-600">цэгцлэх</span>
+              Бодлоо
+              <span className="block text-orange-600">цэгцэлье</span>
             </h2>
 
             <p className="mt-6 max-w-xl text-base leading-8 text-slate-600">

@@ -18,8 +18,8 @@ export default function Home() {
         <MeditationHero />
         <BreathingExercise />
         <Impact />
-        <ThoughtClarity />
         <Books />
+        <ThoughtClarity />
         <WorkExersice />
         <Conclusion />
       </main>

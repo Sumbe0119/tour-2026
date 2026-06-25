@@ -1,6 +1,6 @@
 "use client";
 
-import { useReducer, useEffect, useCallback, useState } from "react";
+import { useReducer, useEffect, useCallback, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Play, Pause, RotateCcw, Volume2, VolumeX } from "lucide-react";
 import { BREATHING_PHASES } from "@/lib/constants";
@@ -16,6 +16,8 @@ type BreathingState = {
 };
 
 type BreathingAction = { type: "toggle" } | { type: "reset" } | { type: "tick" };
+
+const BREATHING_MUSIC_SRC = "/music/short-music.mp3";
 
 const initialState: BreathingState = {
   isActive: false,
@@ -53,8 +55,28 @@ export function BreathingExercise() {
     initialState,
   );
   const [audioEnabled, setAudioEnabled] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const currentPhase: Phase = BREATHING_PHASES[phaseIndex];
+
+  const toggleAudio = useCallback(async () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    if (audioEnabled) {
+      audio.pause();
+      audio.currentTime = 0;
+      setAudioEnabled(false);
+      return;
+    }
+
+    try {
+      await audio.play();
+      setAudioEnabled(true);
+    } catch {
+      setAudioEnabled(false);
+    }
+  }, [audioEnabled]);
 
   const getScale = useCallback(() => {
     if (!isActive) return 1;
@@ -82,6 +104,12 @@ export function BreathingExercise() {
     return () => window.clearInterval(id);
   }, [isActive]);
 
+  useEffect(() => {
+    return () => {
+      audioRef.current?.pause();
+    };
+  }, []);
+
   return (
     <section
       id="breathing"
@@ -89,6 +117,14 @@ export function BreathingExercise() {
       aria-labelledby="breathing-heading"
     >
       <div className="mx-auto max-w-3xl px-4 text-center sm:px-6">
+        <audio
+          ref={audioRef}
+          src={BREATHING_MUSIC_SRC}
+          loop
+          preload="none"
+          className="hidden"
+          aria-hidden
+        />
         <SectionHeading
           eyebrow="Ухаалаг мөч"
           title="Удирдлагат амьсгалын дасгал"
@@ -159,7 +195,7 @@ export function BreathingExercise() {
 
             <button
               type="button"
-              onClick={() => setAudioEnabled((prev) => !prev)}
+              onClick={() => void toggleAudio()}
               className="rounded-full border border-warm-300 p-3 text-warm-600 transition-colors hover:bg-warm-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cream-200"
               aria-label={audioEnabled ? "Дууг хаах" : "Дуу асаах (анхдагчаар унтраалттай)"}
               aria-pressed={audioEnabled}

@@ -30,13 +30,13 @@ const videos = [
   },
   {
     title: "Дасгалын бичлэг 02",
-    desc: "Багаар хамтдаа хийхэд тохиромжтой хөдөлгөөн.",
-    url: "https://www.youtube.com/watch?v=MDz3OCDBvrU",
+    desc: "Анхаарал төвлөрүүлэх дасгал.",
+    url: "https://www.youtube.com/watch?v=1w9TNYfxPv8",
   },
   {
     title: "Дасгалын бичлэг 03",
-    desc: "Сунгалт болон энгийн хөдөлгөөний санаа авах боломжтой.",
-    url: "https://www.youtube.com/watch?v=M-8FvC3GD8c&t=32s",
+    desc: "Тайвшруулах амьсгалын дасгал.",
+    url: "https://www.youtube.com/watch?v=2Nch2ILgxf4&feature=shared",
   },
 ] as const;
 
@@ -136,9 +136,9 @@ const Conclusion = () => {
           </p>
 
           <h2 className="mt-4 text-4xl font-black tracking-tight text-slate-950 sm:text-5xl lg:text-6xl">
-            Бие эрүүл,{" "}
+            Бие эрүүл,
             <span className="bg-gradient-to-r from-emerald-600 via-cyan-500 to-lime-500 bg-clip-text text-transparent">
-              эрч хүч болгоё
+              эрч хүчтэй болгоё
             </span>
           </h2>
 

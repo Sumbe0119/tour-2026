@@ -52,35 +52,6 @@ const Conclusion = () => {
             нөлөөлдөг өдөр тутмын хамгийн энгийн боловч үнэ цэнтэй дадал юм.
           </p>
         </motion.div>
-
-        {/* Main conclusion card */}
-        <motion.div
-          initial={{ opacity: 0, y: 30, scale: 0.96 }}
-          whileInView={{ opacity: 1, y: 0, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7, delay: 0.1 }}
-          className="mx-auto mt-12 max-w-5xl overflow-hidden rounded-[2.5rem] border border-white/10 bg-white/[0.08] p-3 shadow-2xl shadow-cyan-950/40 backdrop-blur-xl"
-        >
-          <div className="rounded-[2rem] bg-white p-6 text-center sm:p-10">
-            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-cyan-400 text-4xl shadow-xl shadow-emerald-900/20">
-              ⚡
-            </div>
-
-            <h3 className="mx-auto mt-6 max-w-3xl text-2xl font-black leading-tight text-slate-950 sm:text-4xl">
-              Өдөр бүр багахан хөдөлгөөн хийж хэвших нь өөрийгөө хайрлаж
-              буйн хамгийн бодит илэрхийлэл юм.
-            </h3>
-
-            <p className="mx-auto mt-5 max-w-3xl text-sm leading-7 text-slate-600 sm:text-base">
-              Идэвхтэй хүн илүү сэргэлэн, илүү төвлөрсөн, илүү тогтвортой
-              байдаг. Харин хөдөлгөөн багатай амьдралын хэв маяг нь ядралт,
-              стресс, төвлөрөл сулрах шалтгаан болж болно. Тиймээс эрүүл,
-              эрч хүчтэй амьдрахын эхлэл нь өдөр тутмын энгийн хөдөлгөөнөөс
-              эхэлнэ.
-            </p>
-          </div>
-        </motion.div>
-
         {/* Points */}
         <div className="mt-8 grid gap-5 md:grid-cols-3">
           {conclusionPoints.map((item, index) => (
