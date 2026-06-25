@@ -16,8 +16,8 @@ export default function Home() {
         <Greetings />
         <Managemant />
         <MeditationHero />
-        <Impact />
         <BreathingExercise />
+        <Impact />
         <ThoughtClarity />
         <Books />
         <WorkExersice />
