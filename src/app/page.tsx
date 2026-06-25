@@ -7,6 +7,7 @@ import Greetings from "@/components/Greetings";
 import Managemant from "@/components/Managemant";
 import Conclusion from "@/components/Conclusion";
 import Impact from "@/components/Impact";
+import ThoughtClarity from "@/components/ThoughtClarity";
 
 export default function Home() {
   return (
@@ -17,6 +18,7 @@ export default function Home() {
         <MeditationHero />
         <Impact />
         <BreathingExercise />
+        <ThoughtClarity />
         <Books />
         <WorkExersice />
         <Conclusion />

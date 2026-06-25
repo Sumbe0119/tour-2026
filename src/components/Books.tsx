@@ -360,8 +360,8 @@ export default function BookShowcase() {
             </p>
             <h2 className="text-4xl font-black tracking-tight sm:text-5xl lg:text-6xl">
               Сэтгэлгээ өөрчилдөг
-              <span className="bg-gradient-to-r from-red-400 via-orange-300 to-yellow-200 bg-clip-text text-transparent">
-                3 ном
+              <span className="ml-3 bg-gradient-to-r from-red-400 via-orange-300 to-yellow-200 bg-clip-text text-transparent">
+                ном
               </span>
             </h2>
           </div>
